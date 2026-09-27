@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CV Builder</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <header class="app-header">
+    <h1>CV Builder</h1>
+    <p class="subtitle">Create your resume, pick a theme, and export to HTML or PDF</p>
+  </header>
+
+  <main class="app-layout">
+    <section class="editor-panel">
+      <form id="cv-form" class="cv-form">
+        <fieldset class="form-section">
+          <legend>Personal Information</legend>
+          <div class="field-row">
+            <label for="fullName">Full Name *</label>
+            <input type="text" id="fullName" name="fullName" required placeholder="Jane Doe">
+          </div>
+          <div class="field-row">
+            <label for="jobTitle">Job Title</label>
+            <input type="text" id="jobTitle" name="jobTitle" placeholder="Software Engineer">
+          </div>
+          <div class="field-row">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="jane@example.com">
+          </div>
+          <div class="field-row">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" name="phone" placeholder="+1 555 0100">
+          </div>
+          <div class="field-row">
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location" placeholder="City, Country">
+          </div>
+          <div class="field-row">
+            <label for="link">Website / LinkedIn</label>
+            <input type="url" id="link" name="link" placeholder="https://linkedin.com/in/janedoe">
+          </div>
+        </fieldset>
+
+        <fieldset class="form-section">
+          <legend>Profile Photo</legend>
+          <div class="photo-controls">
+            <label class="photo-toggle">
+              <input type="checkbox" id="usePhoto" name="usePhoto">
+              Include a profile photo
+            </label>
+            <div id="photo-upload-area" class="photo-upload-area hidden">
+              <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp">
+              <div id="photoPreview" class="photo-preview hidden">
+                <img id="photoPreviewImg" alt="Photo preview">
+                <button type="button" id="removePhoto" class="btn btn-secondary btn-small">Remove Photo</button>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="form-section">
+          <legend>Professional Summary</legend>
+          <textarea id="summary" name="summary" rows="4" placeholder="Brief overview of your experience and goals..."></textarea>
+        </fieldset>
+
+        <fieldset class="form-section">
+          <legend>Work Experience</legend>
+          <div id="experience-list" class="entry-list"></div>
+          <button type="button" id="addExperience" class="btn btn-secondary">+ Add Experience</button>
+        </fieldset>
+
+        <fieldset class="form-section">
+          <legend>Education</legend>
+          <div id="education-list" class="entry-list"></div>
+          <button type="button" id="addEducation" class="btn btn-secondary">+ Add Education</button>
+        </fieldset>
+
+        <fieldset class="form-section">
+          <legend>Skills</legend>
+          <textarea id="skills" name="skills" rows="3" placeholder="One skill per line (e.g. C++, Python, Git)"></textarea>
+        </fieldset>
+
+        <fieldset class="form-section">
+          <legend>Projects <span class="optional">(optional)</span></legend>
+          <div id="projects-list" class="entry-list"></div>
+          <button type="button" id="addProject" class="btn btn-secondary">+ Add Project</button>
+        </fieldset>
+      </form>
+    </section>
+
+    <aside class="sidebar-panel">
+      <section class="sidebar-section">
+        <h2>Choose Theme</h2>
+        <div id="theme-list" class="theme-list">
+          <p class="loading-text">Loading themes...</p>
+        </div>
+      </section>
+
+      <section class="sidebar-section actions">
+        <button type="button" id="previewBtn" class="btn btn-primary">Preview CV</button>
+        <button type="button" id="exportHtmlBtn" class="btn btn-accent">Export HTML</button>
+        <button type="button" id="exportPdfBtn" class="btn btn-accent">Export PDF</button>
+      </section>
+
+      <section class="sidebar-section">
+        <h2>Live Preview</h2>
+        <div id="preview-frame" class="preview-frame">
+          <p class="preview-placeholder">Fill in your details and click Preview to see your CV.</p>
+        </div>
+      </section>
+
+      <div id="status-message" class="status-message hidden" role="status"></div>
+    </aside>
+  </main>
+
+  <template id="experience-template">
+    <div class="entry-card">
+      <div class="field-row">
+        <label>Role</label>
+        <input type="text" data-field="role" placeholder="Senior Developer">
+      </div>
+      <div class="field-row">
+        <label>Company</label>
+        <input type="text" data-field="company" placeholder="Acme Inc.">
+      </div>
+      <div class="field-row">
+        <label>Duration</label>
+        <input type="text" data-field="duration" placeholder="2020 – Present">
+      </div>
+      <div class="field-row">
+        <label>Details</label>
+        <textarea data-field="details" rows="2" placeholder="Key responsibilities and achievements"></textarea>
+      </div>
+      <button type="button" class="btn btn-danger btn-small remove-entry">Remove</button>
+    </div>
+  </template>
+
+  <template id="education-template">
+    <div class="entry-card">
+      <div class="field-row">
+        <label>Degree</label>
+        <input type="text" data-field="degree" placeholder="B.Sc. Computer Science">
+      </div>
+      <div class="field-row">
+        <label>Institution</label>
+        <input type="text" data-field="institution" placeholder="University Name">
+      </div>
+      <div class="field-row">
+        <label>Year</label>
+        <input type="text" data-field="year" placeholder="2020">
+      </div>
+      <div class="field-row">
+        <label>Notes</label>
+        <textarea data-field="notes" rows="2" placeholder="Honors, GPA, relevant coursework"></textarea>
+      </div>
+      <button type="button" class="btn btn-danger btn-small remove-entry">Remove</button>
+    </div>
+  </template>
+
+  <template id="project-template">
+    <div class="entry-card">
+      <div class="field-row">
+        <label>Project</label>
+        <input type="text" data-field="project" placeholder="CV Builder">
+      </div>
+      <div class="field-row">
+        <label>Stack</label>
+        <input type="text" data-field="stack" placeholder="C++, HTML, CSS">
+      </div>
+      <div class="field-row">
+        <label>Details</label>
+        <textarea data-field="details" rows="2" placeholder="What you built and the impact"></textarea>
+      </div>
+      <button type="button" class="btn btn-danger btn-small remove-entry">Remove</button>
+    </div>
+  </template>
+
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
